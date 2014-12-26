@@ -1,7 +1,7 @@
 python-nexus
 ============
 
-A nexus client in Python. Use it to add the ability to download jar, war or pom files from a nexus repo, typically before deploying to tomcat or another container.
+A nexus client in Python. Use it to add the ability to download jar, war or pom files from a nexus repo, typically before deploying to tomcat or another container. Works great with [Fabric](http://www.fabfile.org/).
 
 See the included example_script.py for a sample usage.
 
