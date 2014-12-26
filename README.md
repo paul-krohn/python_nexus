@@ -31,7 +31,7 @@ client.get_artifact(
     packaging="jar",
     version="LATEST",
     repository="releases")
-
+```
 Finally, sample usage of the example script:
 ```
 ./example_script.py -r releases -g org.apache.ant -a ant -v LATEST -s https://repository.apache.org
