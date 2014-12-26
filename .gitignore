@@ -55,3 +55,4 @@ target/
 
 *.war
 *.jar
+*.pom
