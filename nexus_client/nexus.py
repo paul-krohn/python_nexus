@@ -54,16 +54,18 @@ class Nexus(object):
             raise ValueError("bad response (%s) for resolver URL %s" % (resolver_response.status_code, resolver_url))
         return resolver_response.content
 
-    def _artifact_url(self, artifact_path):
-        return "%s/content/groups/private%s" % (self.nexus_base_url, artifact_path)
+    def _artifact_url(self, artifact_path, public=True):
+        return "%s/content/groups/%s%s" % (self.nexus_base_url, 'public' if public else 'private', artifact_path)
 
     def get_artifact(self, group_id, artifact_id, version="trunk-SNAPSHOT",
-                     repository="snapshots", packaging="war"):
+                     repository="snapshots", packaging="war", public=True):
         artifact_xml = self._resolve_artifact(group_id, artifact_id, version, repository, packaging)
         parsed_xml = etree.fromstring(artifact_xml)
 
         artifact_path = parsed_xml.xpath("/artifact-resolution/data/repositoryPath")[0].text
         artifact_sha1 = parsed_xml.xpath("/artifact-resolution/data/sha1")[0].text
+
+        print "artifact url is: %s" % self._artifact_url(artifact_path, public)
 
         # do we already have the file, with the requisite sha1 hash?
         local_artifact_path = os.path.join(self.download_directory, os.path.basename(artifact_path))
@@ -72,10 +74,10 @@ class Nexus(object):
             return True
         else:
             if self.nexus_auth:
-                download_response = requests.get(self._artifact_url(artifact_path),
+                download_response = requests.get(self._artifact_url(artifact_path, public),
                                                  auth=(self.nexus_user, self.nexus_pass), stream=True)
             else:
-                download_response = requests.get(self._artifact_url(artifact_path), stream=True)
+                download_response = requests.get(self._artifact_url(artifact_path, public), stream=True)
             with open(local_artifact_path, 'wb') as f:
                 for chunk in download_response.iter_content(chunk_size=4096):
                     if chunk:  # filter out keep-alive new chunks
