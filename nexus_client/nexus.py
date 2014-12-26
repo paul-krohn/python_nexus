@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import requests
 import hashlib
 from lxml import etree
@@ -7,7 +9,6 @@ import sys
 
 class Nexus(object):
     def __init__(self, nexus_base_url="", **kwargs):
-        print "hey! the base url arg is :%s:" % nexus_base_url
         self.nexus_auth = False
         # check passed-in args, and env, for nexus user/pass, else leave blank
         if "user" in kwargs.keys() and "password" in kwargs.keys():
@@ -24,6 +25,12 @@ class Nexus(object):
             self.download_directory = kwargs["download_directory"]
         else:
             self.download_directory = os.getcwd()
+        self.verbose = False
+        if "verbose" in kwargs.keys():
+            self.verbose = True
+
+    def warning(*objs):
+        print("WARNING: ", *objs, file=sys.stderr)
 
     @staticmethod
     def _hash_file(file_path):
@@ -45,16 +52,13 @@ class Nexus(object):
 
     def _resolve_artifact(self, group_id, artifact_id, version, repository, packaging):
         resolver_url = self._resolver_url(group_id, artifact_id, version, repository, packaging)
-        print resolver_url
         if self.nexus_auth:
             resolver_response = requests.get(resolver_url, auth=(self.nexus_user, self.nexus_pass))
         else:
             resolver_response = requests.get(resolver_url)
-        if resolver_response.status_code == 200:
-            print resolver_response.content
-        else:
-            print "bad response code: %s" % resolver_response.status_code
-            sys.exit(1)
+        if resolver_response.status_code != 200:
+            #self.warning("bad response code: %s" % resolver_response.status_code)
+            raise ValueError("bad response (%s) for resolver URL %s" % (resolver_response.status_code, resolver_url))
         return resolver_response.content
 
     def _artifact_url(self, artifact_path):
