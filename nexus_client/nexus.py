@@ -1,10 +1,7 @@
-from __future__ import print_function
-
 import requests
 import hashlib
 from lxml import etree
 import os
-import sys
 
 
 class Nexus(object):
@@ -28,9 +25,6 @@ class Nexus(object):
         self.verbose = False
         if "verbose" in kwargs.keys():
             self.verbose = True
-
-    def warning(*objs):
-        print("WARNING: ", *objs, file=sys.stderr)
 
     @staticmethod
     def _hash_file(file_path):
