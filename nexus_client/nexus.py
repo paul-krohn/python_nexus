@@ -57,7 +57,6 @@ class Nexus(object):
         else:
             resolver_response = requests.get(resolver_url)
         if resolver_response.status_code != 200:
-            #self.warning("bad response code: %s" % resolver_response.status_code)
             raise ValueError("bad response (%s) for resolver URL %s" % (resolver_response.status_code, resolver_url))
         return resolver_response.content
 
