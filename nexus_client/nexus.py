@@ -69,8 +69,7 @@ class Nexus(object):
         artifact_path = parsed_xml.xpath("/artifact-resolution/data/repositoryPath")[0].text
         artifact_sha1 = parsed_xml.xpath("/artifact-resolution/data/sha1")[0].text
 
-        print "artifact url is: {artifact_url}".format(
-                    artifact_url=self._artifact_url(artifact_path, public))
+        print("artifact url is: {artifact_url}".format(artifact_url=self._artifact_url(artifact_path, public)))
 
         # do we already have the file, with the requisite sha1 hash?
         local_artifact_path = os.path.join(self.download_directory, os.path.basename(artifact_path))
