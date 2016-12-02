@@ -1,8 +1,8 @@
 from distutils.core import setup
 setup(
-    name='nexus-client',
-    packages=['nexus-client'], # this must be the same as the name above
-    version='0.1self.2',
+    name='nexus_client',
+    packages=['nexus_client'], # this must be the same as the name above
+    version='0.1.2',
     description='Python client for Nexus.',
     author='Paul Krohn',
     author_email='paul@daemonize.com',
