@@ -51,11 +51,15 @@ class Nexus(object):
         else:
             resolver_response = requests.get(resolver_url)
         if resolver_response.status_code != 200:
-            raise ValueError("bad response (%s) for resolver URL %s" % (resolver_response.status_code, resolver_url))
+            raise ValueError("bad response ({status_code}) for resolver URL {resolver_url}".format(
+                status_code=resolver_response.status_code, resolver_url=resolver_url))
         return resolver_response.content
 
     def _artifact_url(self, artifact_path, public=True):
-        return "%s/content/groups/%s%s" % (self.nexus_base_url, 'public' if public else 'private', artifact_path)
+        return "{nexus_base_url}/content/groups/{public}{artifact_path}".format(
+			nexus_base_url=self.nexus_base_url,
+            public='public' if public else 'private',
+            artifact_path=artifact_path)
 
     def get_artifact(self, group_id, artifact_id, version="trunk-SNAPSHOT",
                      repository="snapshots", packaging="war", public=True):
@@ -65,7 +69,7 @@ class Nexus(object):
         artifact_path = parsed_xml.xpath("/artifact-resolution/data/repositoryPath")[0].text
         artifact_sha1 = parsed_xml.xpath("/artifact-resolution/data/sha1")[0].text
 
-        print "artifact url is: %s" % self._artifact_url(artifact_path, public)
+        print("artifact url is: {artifact_url}".format(artifact_url=self._artifact_url(artifact_path, public)))
 
         # do we already have the file, with the requisite sha1 hash?
         local_artifact_path = os.path.join(self.download_directory, os.path.basename(artifact_path))
